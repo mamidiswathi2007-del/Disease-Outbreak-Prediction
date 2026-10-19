@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Disease Outbreak Analytics</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 18px;
+            background: #0f172a;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 7px;
+        }
+
+        nav a:hover {
+            background: #2563eb;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #123b69, #168aad);
+            color: white;
+            padding: 30px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            margin-top: 0;
+            font-size: 32px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 4px 15px #0000000d;
+        }
+
+        .summary-card h3 {
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .summary-card p {
+            font-size: 28px;
+            font-weight: bold;
+            color: #123b69;
+            margin-bottom: 0;
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 22px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 22px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px #0000000d;
+            min-width: 0;
+        }
+
+        .chart-card h2 {
+            font-size: 19px;
+            color: #123b69;
+            margin-top: 0;
+        }
+
+        .chart-box {
+            position: relative;
+            height: 300px;
+        }
+
+        .note {
+            background: #fff7ed;
+            border-left: 5px solid #f59e0b;
+            padding: 18px;
+            margin-top: 25px;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 12px;
+            }
+
+            .hero h1 {
+                font-size: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <a href="/">Home</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/prediction">Prediction</a>
+    <a href="/analytics">Analytics</a>
+    <a href="/dataset">Dataset</a>
+</nav>
+
+<main class="container">
+
+    <section class="hero">
+        <h1>📊 Disease Outbreak Analytics</h1>
+        <p>
+            Explore disease outbreak records, temperature,
+            rainfall and reported cases.
+        </p>
+    </section>
+
+    <section class="summary-grid">
+
+        <div class="summary-card">
+            <h3>Total Records</h3>
+            <p id="totalRecords">0</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>Outbreak Records</h3>
+            <p id="outbreakRecords">0</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>No-Outbreak Records</h3>
+            <p id="noOutbreakRecords">0</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>Average Temperature</h3>
+            <p id="averageTemperature">0 °C</p>
+        </div>
+
+    </section>
+
+    <div id="chartError" class="error-message" hidden></div>
+
+    <section class="chart-grid">
+
+        <div class="chart-card">
+            <h2>Outbreak Distribution</h2>
+            <div class="chart-box">
+                <canvas id="outbreakChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Temperature Analysis</h2>
+            <div class="chart-box">
+                <canvas id="temperatureChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Rainfall Analysis</h2>
+            <div class="chart-box">
+                <canvas id="rainfallChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h2>Reported Cases Analysis</h2>
+            <div class="chart-box">
+                <canvas id="casesChart"></canvas>
+            </div>
+        </div>
+
+    </section>
+
+    <section class="note">
+        <h3>ℹ️ Project Information</h3>
+        <p>
+            These charts visualize the records in the project's dataset.
+            They are intended for educational demonstration only.
+        </p>
+        <p>
+            The project uses a small synthetic dataset. Its predictions
+            are not validated for real-world disease surveillance.
+        </p>
+    </section>
+
+</main>
+
+<script>
+    // Flask sends dataset values to this HTML page.
+    const outbreakLabels = {{ labels | tojson }};
+    const outbreakCounts = {{ class_counts | tojson }};
+    const temperatureValues = {{ temperature_values | tojson }};
+    const rainfallValues = {{ rainfall_values | tojson }};
+    const casesValues = {{ cases_values | tojson }};
+
+    // Calculate summary values.
+    const total = outbreakCounts.reduce((sum, value) => sum + value, 0);
+
+    const outbreakIndex = outbreakLabels.indexOf("1");
+    const noOutbreakIndex = outbreakLabels.indexOf("0");
+
+    const outbreakTotal = outbreakIndex >= 0
+        ? outbreakCounts[outbreakIndex] : 0;
+
+    const noOutbreakTotal = noOutbreakIndex >= 0
+        ? outbreakCounts[noOutbreakIndex] : 0;
+
+    const avgTemperature = temperatureValues.length
+        ? temperatureValues.reduce((sum, value) => sum + value, 0)
+            / temperatureValues.length
+        : 0;
+
+    document.getElementById("totalRecords").textContent = total;
+    document.getElementById("outbreakRecords").textContent = outbreakTotal;
+    document.getElementById("noOutbreakRecords").textContent = noOutbreakTotal;
+
+    document.getElementById("averageTemperature").textContent =
+        avgTemperature.toFixed(1) + " °C";
+
+    // If no records exist, show a helpful message.
+    if (total === 0) {
+        const errorBox = document.getElementById("chartError");
+        errorBox.hidden = false;
+        errorBox.textContent =
+            "No dataset records found. Please check data/disease_data.csv.";
+    }
+
+    // Check that Chart.js loaded.
+    if (typeof Chart === "undefined") {
+        const errorBox = document.getElementById("chartError");
+        errorBox.hidden = false;
+        errorBox.textContent =
+            "Charts could not load. Check your internet connection and refresh the page.";
+    } else {
+
+        // Chart 1: Outbreak distribution
+        new Chart(document.getElementById("outbreakChart"), {
+            type: "doughnut",
+            data: {
+                labels: outbreakLabels.map(label =>
+                    label === "1" ? "Outbreak" : "No Outbreak"
+                ),
+                datasets: [{
+                    data: outbreakCounts,
+                    backgroundColor: ["#36a2eb", "#ff6384"],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: "bottom" }
+                }
+            }
+        });
+
+        // Chart 2: Temperature
+        new Chart(document.getElementById("temperatureChart"), {
+            type: "line",
+            data: {
+                labels: temperatureValues.map((_, i) => "Record " + (i + 1)),
+                datasets: [{
+                    label: "Temperature (°C)",
+                    data: temperatureValues,
+                    borderColor: "#ff6384",
+                    backgroundColor: "rgba(255,99,132,0.15)",
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        // Chart 3: Rainfall
+        new Chart(document.getElementById("rainfallChart"), {
+            type: "bar",
+            data: {
+                labels: rainfallValues.map((_, i) => "Record " + (i + 1)),
+                datasets: [{
+                    label: "Rainfall (mm)",
+                    data: rainfallValues,
+                    backgroundColor: "#36a2eb"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        ticks: { maxTicksLimit: 10 }
+                    }
+                }
+            }
+        });
+
+        // Chart 4: Reported cases
+        new Chart(document.getElementById("casesChart"), {
+            type: "line",
+            data: {
+                labels: casesValues.map((_, i) => "Record " + (i + 1)),
+                datasets: [{
+                    label: "Reported Cases",
+                    data: casesValues,
+                    borderColor: "#9966ff",
+                    backgroundColor: "rgba(153,102,255,0.15)",
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DiseaseGuard | Disease Outbreak Prediction</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f7f9fc;
+            color: #172b4d;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            width: 100%;
+            padding: 18px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            box-shadow: 0 3px 18px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            color: #155eef;
+            font-size: 23px;
+            font-weight: 800;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #334155;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #155eef;
+        }
+
+        .nav-links .nav-button {
+            background: #155eef;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 8px;
+        }
+
+        .nav-links .nav-button:hover {
+            background: #1249c7;
+            color: white;
+        }
+
+        /* Hero section */
+        .hero {
+            min-height: 590px;
+            padding: 85px 7%;
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            align-items: center;
+            gap: 50px;
+            background:
+                radial-gradient(circle at 85% 15%, #dceaff 0, transparent 32%),
+                linear-gradient(135deg, #f8fbff, #edf4ff);
+        }
+
+        .hero-content {
+            max-width: 650px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #e0ecff;
+            color: #155eef;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 22px;
+        }
+
+        .hero h1 {
+            font-size: clamp(38px, 4.5vw, 59px);
+            line-height: 1.13;
+            letter-spacing: -1.5px;
+            color: #102a56;
+            margin-bottom: 23px;
+        }
+
+        .hero h1 span {
+            color: #155eef;
+        }
+
+        .hero-description {
+            max-width: 570px;
+            font-size: 17px;
+            color: #52647e;
+            margin-bottom: 30px;
+            line-height: 1.9;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 22px;
+            border-radius: 9px;
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 700;
+            transition: 0.25s;
+        }
+
+        .primary-button {
+            color: white;
+            background: #155eef;
+            box-shadow: 0 7px 18px rgba(21, 94, 239, 0.2);
+        }
+
+        .primary-button:hover {
+            background: #1249c7;
+            transform: translateY(-3px);
+        }
+
+        .secondary-button {
+            color: #155eef;
+            background: white;
+            border: 1px solid #cbdaf5;
+        }
+
+        .secondary-button:hover {
+            background: #eaf1ff;
+            transform: translateY(-3px);
+        }
+
+        /* Hero visual */
+        .visual-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 0;
+        }
+
+        .health-card {
+            width: 100%;
+            max-width: 420px;
+            padding: 30px;
+            background: white;
+            border: 1px solid #e5ecf8;
+            border-radius: 24px;
+            box-shadow: 0 25px 65px rgba(27, 67, 126, 0.13);
+        }
+
+        .health-icon {
+            width: 76px;
+            height: 76px;
+            border-radius: 20px;
+            background: #e4edff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 39px;
+            margin-bottom: 22px;
+        }
+
+        .health-card h2 {
+            font-size: 23px;
+            color: #102a56;
+            margin-bottom: 8px;
+        }
+
+        .health-card > p {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .metric {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #edf1f7;
+            gap: 10px;
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: #52647e;
+            font-size: 14px;
+        }
+
+        .metric-value {
+            color: #155eef;
+            font-weight: 800;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        /* Feature section */
+        .section {
+            padding: 80px 7%;
+        }
+
+        .section-heading {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 45px;
+        }
+
+        .section-heading .eyebrow {
+            color: #155eef;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .section-heading h2 {
+            font-size: clamp(28px, 3vw, 39px);
+            line-height: 1.3;
+            color: #102a56;
+            margin: 12px 0;
+        }
+
+        .section-heading p {
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 25px;
+        }
+
+        .feature-card {
+            padding: 30px;
+            background: white;
+            border: 1px solid #e9eef7;
+            border-radius: 17px;
+            transition: 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px rgba(27, 67, 126, 0.09);
+            border-color: #c6d8ff;
+        }
+
+        .feature-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+            background: #eaf1ff;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            color: #102a56;
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .feature-link {
+            color: #155eef;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .feature-link:hover {
+            text-decoration: underline;
+        }
+
+        /* How it works */
+        .how-section {
+            padding: 75px 7%;
+            background: #102a56;
+            color: white;
+        }
+
+        .how-section .section-heading h2 {
+            color: white;
+        }
+
+        .how-section .section-heading p {
+            color: #cbd5e1;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 25px;
+        }
+
+        .step-card {
+            padding: 28px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+        }
+
+        .step-number {
+            width: 43px;
+            height: 43px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: #2563eb;
+            color: white;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .step-card h3 {
+            font-size: 19px;
+            margin-bottom: 10px;
+        }
+
+        .step-card p {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        /* About section */
+        .about-section {
+            padding: 75px 7%;
+        }
+
+        .about-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 45px;
+            padding: 42px;
+            background: white;
+            border: 1px solid #e5ecf8;
+            border-radius: 20px;
+        }
+
+        .about-card h2 {
+            color: #102a56;
+            font-size: 30px;
+            margin-bottom: 16px;
+        }
+
+        .about-card p {
+            color: #64748b;
+            margin-bottom: 14px;
+        }
+
+        .about-highlights {
+            display: grid;
+            gap: 15px;
+        }
+
+        .highlight {
+            padding: 17px;
+            border-radius: 11px;
+            background: #f1f6ff;
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .highlight span {
+            margin-right: 10px;
+        }
+
+        /* Call to action */
+        .cta-section {
+            padding: 30px 7% 80px;
+        }
+
+        .cta-card {
+            padding: 45px 25px;
+            text-align: center;
+            background: linear-gradient(135deg, #155eef, #0e7490);
+            color: white;
+            border-radius: 22px;
+        }
+
+        .cta-card h2 {
+            font-size: clamp(26px, 3vw, 35px);
+            margin-bottom: 12px;
+        }
+
+        .cta-card p {
+            margin-bottom: 25px;
+            color: #e0f2fe;
+        }
+
+        .cta-card .button {
+            background: white;
+            color: #155eef;
+        }
+
+        .cta-card .button:hover {
+            background: #eaf1ff;
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        footer {
+            padding: 28px 7%;
+            text-align: center;
+            background: #0b1933;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        footer strong {
+            color: white;
+        }
+
+        /* Responsive design */
+        @media (max-width: 1000px) {
+            .navbar {
+                padding: 16px 4%;
+            }
+
+            .nav-links {
+                gap: 13px;
+            }
+
+            .hero {
+                padding: 65px 5%;
+                gap: 30px;
+            }
+
+            .section,
+            .how-section,
+            .about-section {
+                padding-left: 5%;
+                padding-right: 5%;
+            }
+
+            .feature-grid,
+            .steps-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .navbar {
+                position: relative;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .nav-links {
+                justify-content: center;
+                gap: 10px 15px;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                padding: 50px 6%;
+            }
+
+            .hero h1 {
+                letter-spacing: -0.5px;
+            }
+
+            .visual-area {
+                margin-top: 10px;
+            }
+
+            .feature-grid,
+            .steps-grid,
+            .about-card {
+                grid-template-columns: 1fr;
+            }
+
+            .about-card {
+                padding: 25px;
+                gap: 25px;
+            }
+
+            .section {
+                padding-top: 55px;
+                padding-bottom: 55px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .nav-links a {
+                font-size: 12px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .hero-buttons .button {
+                width: 100%;
+            }
+
+            .health-card {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="navbar">
+
+        <a href="/" class="logo">🩺 DiseaseGuard</a>
+
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/prediction">Prediction</a>
+            <a href="/analytics">Analytics</a>
+            <a href="/dataset">Dataset</a>
+            <a href="/prediction" class="nav-button">Get Started →</a>
+        </nav>
+
+    </header>
+
+    <!-- Hero Section -->
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <div class="badge">
+                    MACHINE LEARNING PROJECT
+                </div>
+
+                <h1>
+                    Smarter Insights for
+                    <span>Disease Outbreak Prediction</span>
+                </h1>
+
+                <p class="hero-description">
+                    Explore how machine learning can analyze environmental
+                    conditions and reported cases to classify possible
+                    disease outbreak patterns using a demonstration dataset.
+                </p>
+
+                <div class="hero-buttons">
+                    <a href="/prediction" class="button primary-button">
+                        Start Prediction &nbsp; →
+                    </a>
+
+                    <a href="/dashboard" class="button secondary-button">
+                        Explore Dashboard
+                    </a>
+                </div>
+
+            </div>
+
+            <div class="visual-area">
+
+                <div class="health-card">
+
+                    <div class="health-icon">🧬</div>
+
+                    <h2>Outbreak Analysis</h2>
+
+                    <p>
+                        Explore the factors used in this ML demonstration.
+                    </p>
+
+                    <div class="metric">
+                        <span class="metric-label">🌡️ Temperature</span>
+                        <span class="metric-value">Environmental Input</span>
+                    </div>
+
+                    <div class="metric">
+                        <span class="metric-label">🌧️ Rainfall</span>
+                        <span class="metric-value">Environmental Input</span>
+                    </div>
+
+                    <div class="metric">
+                        <span class="metric-label">🏥 Reported Cases</span>
+                        <span class="metric-value">Dataset Input</span>
+                    </div>
+
+                    <div class="metric">
+                        <span class="metric-label">🤖 ML Model</span>
+                        <span class="metric-value">Class 0 / Class 1</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Features -->
+        <section class="section">
+
+            <div class="section-heading">
+
+                <span class="eyebrow">PROJECT FEATURES</span>
+
+                <h2>Everything You Need in One Dashboard</h2>
+
+                <p>
+                    Explore the project's machine-learning prediction,
+                    dataset and visual analytics in one place.
+                </p>
+
+            </div>
+
+            <div class="feature-grid">
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">🤖</div>
+
+                    <h3>ML Prediction</h3>
+
+                    <p>
+                        Submit temperature, rainfall and reported-case values
+                        to see the trained model's classification.
+                    </p>
+
+                    <a href="/prediction" class="feature-link">
+                        Try Prediction →
+                    </a>
+
+                </article>
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">📊</div>
+
+                    <h3>Interactive Dashboard</h3>
+
+                    <p>
+                        View dataset summaries and explore the available
+                        outbreak and non-outbreak records.
+                    </p>
+
+                    <a href="/dashboard" class="feature-link">
+                        View Dashboard →
+                    </a>
+
+                </article>
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">📈</div>
+
+                    <h3>Data Analytics</h3>
+
+                    <p>
+                        Visualize outbreak class distribution, temperature,
+                        rainfall and reported-case values.
+                    </p>
+
+                    <a href="/analytics" class="feature-link">
+                        Explore Analytics →
+                    </a>
+
+                </article>
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">📁</div>
+
+                    <h3>Dataset Explorer</h3>
+
+                    <p>
+                        Browse the available dataset records and inspect
+                        the columns used in this project.
+                    </p>
+
+                    <a href="/dataset" class="feature-link">
+                        View Dataset →
+                    </a>
+
+                </article>
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">🌦️</div>
+
+                    <h3>Environmental Factors</h3>
+
+                    <p>
+                        Explore temperature and rainfall values alongside
+                        the reported cases in the dataset.
+                    </p>
+
+                    <a href="/analytics" class="feature-link">
+                        View Analysis →
+                    </a>
+
+                </article>
+
+                <article class="feature-card">
+
+                    <div class="feature-icon">🎓</div>
+
+                    <h3>Academic Project</h3>
+
+                    <p>
+                        Understand a simple machine-learning workflow,
+                        from dataset exploration to model prediction.
+                    </p>
+
+                    <a href="#about" class="feature-link">
+                        About Project →
+                    </a>
+
+                </article>
+
+            </div>
+
+        </section>
+
+        <!-- How It Works -->
+        <section class="how-section">
+
+            <div class="section-heading">
+
+                <span class="eyebrow">HOW IT WORKS</span>
+
+                <h2>Three Simple Steps</h2>
+
+                <p>
+                    Follow the workflow to explore this machine-learning
+                    demonstration.
+                </p>
+
+            </div>
+
+            <div class="steps-grid">
+
+                <article class="step-card">
+
+                    <div class="step-number">01</div>
+
+                    <h3>Enter the Inputs</h3>
+
+                    <p>
+                        Provide temperature, rainfall and reported-case
+                        values on the prediction page.
+                    </p>
+
+                </article>
+
+                <article class="step-card">
+
+                    <div class="step-number">02</div>
+
+                    <h3>Run the ML Model</h3>
+
+                    <p>
+                        The trained model processes the supplied values
+                        and returns a predicted class.
+                    </p>
+
+                </article>
+
+                <article class="step-card">
+
+                    <div class="step-number">03</div>
+
+                    <h3>Explore the Results</h3>
+
+                    <p>
+                        Visit the dashboard and analytics pages to explore
+                        the dataset and its recorded patterns.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+        <!-- About Project -->
+        <section class="about-section" id="about">
+
+            <div class="about-card">
+
+                <div>
+
+                    <span class="badge">ABOUT THE PROJECT</span>
+
+                    <h2>Disease Outbreak Prediction Using Machine Learning</h2>
+
+                    <p>
+                        This academic project demonstrates how a
+                        classification model can use temperature,
+                        rainfall and reported cases to predict an outbreak
+                        category.
+                    </p>
+
+                    <p>
+                        The website combines a prediction form, dataset
+                        explorer, dashboard and charts in one interface.
+                    </p>
+
+                    <a href="/dataset" class="button primary-button">
+                        Explore Dataset →
+                    </a>
+
+                </div>
+
+                <div class="about-highlights">
+
+                    <div class="highlight">
+                        <span>🐍</span>
+                        Python-based machine learning
+                    </div>
+
+                    <div class="highlight">
+                        <span>🧠</span>
+                        Scikit-learn classification model
+                    </div>
+
+                    <div class="highlight">
+                        <span>🌐</span>
+                        Flask-powered web application
+                    </div>
+
+                    <div class="highlight">
+                        <span>📉</span>
+                        Data visualization and analysis
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section">
+
+            <div class="cta-card">
+
+                <h2>Ready to Explore the Prediction Model?</h2>
+
+                <p>
+                    Open the prediction page and try the machine-learning
+                    demonstration with sample inputs.
+                </p>
+
+                <a href="/prediction" class="button">
+                    Start Prediction &nbsp; →
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+
+        <p>
+            <strong>DiseaseGuard</strong> |
+            Disease Outbreak Prediction Using Machine Learning
+        </p>
+
+        <p>
+            Academic demonstration only. Not intended for real-world
+            disease surveillance or medical decisions.
+        </p>
+
+    </footer>
+
+</body>
+</html>

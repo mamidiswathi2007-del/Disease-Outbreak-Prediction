@@ -1,0 +1,3 @@
+"""
+Disease Outbreak Prediction package.
+"""

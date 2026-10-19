@@ -1,0 +1,225 @@
+/* EpiWatch - Professional Healthcare Dashboard */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --navy: #142b4a;
+    --blue: #2563eb;
+    --teal: #0d9488;
+    --purple: #7c3aed;
+    --orange: #ea580c;
+    --background: #f3f7fc;
+    --text: #1e293b;
+}
+
+.stApp {
+    background: linear-gradient(135deg, #f5f8ff 0%, #edf7fa 100%);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+}
+
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #142b4a 0%, #203f65 100%);
+}
+
+[data-testid="stSidebar"] * {
+    color: #ffffff !important;
+}
+
+[data-testid="stSidebar"] h1 {
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+    max-width: 1250px;
+}
+
+h1, h2, h3 {
+    color: #142b4a;
+    font-weight: 800;
+    letter-spacing: -0.6px;
+}
+
+p {
+    line-height: 1.7;
+}
+
+/* Dashboard hero section */
+
+.hero {
+    background: linear-gradient(120deg, #142b4a 0%, #176b87 55%, #0d9488 100%);
+    padding: 35px;
+    border-radius: 22px;
+    color: white;
+    margin-bottom: 28px;
+    box-shadow: 0 12px 35px rgba(20, 43, 74, 0.18);
+}
+
+.hero h1,
+.hero h2,
+.hero p,
+.hero span {
+    color: white !important;
+}
+
+.eyebrow {
+    color: #a5f3fc !important;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* Statistics cards */
+
+.metric-card {
+    background: linear-gradient(145deg, #ffffff 0%, #f0f7ff 100%);
+    padding: 23px;
+    border-radius: 18px;
+    border: 1px solid #e1eaf5;
+    border-top: 4px solid #2563eb;
+    box-shadow: 0 6px 22px rgba(31, 59, 91, 0.07);
+    margin-bottom: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(31, 59, 91, 0.13);
+}
+
+.metric-label {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.metric-value {
+    color: #142b4a;
+    font-size: 30px;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+.metric-note {
+    color: #0d9488;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Information panels */
+
+.info-panel {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 18px;
+    border: 1px solid #e2eaf3;
+    box-shadow: 0 5px 20px rgba(31, 59, 91, 0.05);
+    margin-bottom: 20px;
+}
+
+.section-title {
+    color: #142b4a;
+    font-size: 23px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.section-subtitle {
+    color: #64748b;
+    font-size: 14px;
+}
+
+/* Status labels */
+
+.status-pill {
+    display: inline-block;
+    padding: 7px 14px;
+    border-radius: 30px;
+    background: #ccfbf1;
+    color: #115e59;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Buttons */
+
+.stButton > button {
+    background: linear-gradient(110deg, #2563eb 0%, #0d9488 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 700;
+    min-height: 45px;
+    transition: all 0.2s ease;
+}
+
+.stButton > button:hover {
+    color: white;
+    border: none;
+    box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Input fields */
+
+.stTextInput input,
+.stNumberInput input,
+.stSelectbox div[data-baseweb="select"] {
+    border-radius: 10px;
+}
+
+/* Streamlit metric widgets */
+
+div[data-testid="stMetric"] {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid #e2eaf3;
+    box-shadow: 0 4px 15px rgba(31, 59, 91, 0.05);
+}
+
+div[data-testid="stMetricLabel"] {
+    color: #64748b;
+    font-weight: 600;
+}
+
+div[data-testid="stMetricValue"] {
+    color: #142b4a;
+    font-weight: 800;
+}
+
+/* Dividers and charts */
+
+hr {
+    border-color: #dce6f1;
+    margin-top: 25px;
+    margin-bottom: 25px;
+}
+
+[data-testid="stPlotlyChart"] {
+    background: white;
+    border-radius: 16px;
+    padding: 10px;
+}
+
+/* Responsive layout */
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 22px;
+    }
+
+    .metric-value {
+        font-size: 25px;
+    }
+
+    .block-container {
+        padding-top: 1rem;
+    }
+}

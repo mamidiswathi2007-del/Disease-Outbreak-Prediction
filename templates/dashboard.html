@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DiseaseGuard | Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">🩺 DiseaseGuard</a>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/prediction">Prediction</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/dataset">Dataset</a>
+    </nav>
+</header>
+
+<main class="page-container">
+
+    <h1 class="page-title">📊 Disease Intelligence Dashboard</h1>
+
+    <p class="page-subtitle">
+        Explore dataset statistics and disease outbreak classification records.
+    </p>
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <p>📁 Total Records</p>
+            <h2>{{ total_records }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>🟢 Outbreak Class 0</p>
+            <h2>{{ class_0 }}</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>🔴 Outbreak Class 1</p>
+            <h2>{{ class_1 }}</h2>
+        </div>
+
+    </section>
+
+    <section class="stats-grid">
+
+        <div class="stat-card">
+            <p>🌡️ Average Temperature</p>
+            <h2>{{ temperature_avg }} °C</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>🌧️ Average Rainfall</p>
+            <h2>{{ rainfall_avg }} mm</h2>
+        </div>
+
+        <div class="stat-card">
+            <p>📋 Average Reported Cases</p>
+            <h2>{{ cases_avg }}</h2>
+        </div>
+
+    </section>
+
+    <section class="panel">
+        <h2>Outbreak Class Distribution</h2>
+
+        <div style="max-width: 600px; margin: auto;">
+            <canvas id="outbreakChart"></canvas>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Quick Actions</h2>
+
+        <div class="hero-buttons">
+            <a href="/prediction" class="btn-primary">
+                🤖 Run Prediction →
+            </a>
+
+            <a href="/analytics" class="btn-secondary">
+                📈 View Analytics →
+            </a>
+
+            <a href="/dataset" class="btn-secondary">
+                📂 Explore Dataset →
+            </a>
+        </div>
+    </section>
+
+    <section class="notice">
+        <strong>⚠️ Educational Demonstration Only</strong>
+
+        <p>
+            The project uses a small synthetic dataset.
+            These statistics do not represent real-world disease surveillance.
+        </p>
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 DiseaseGuard | Disease Outbreak Prediction Project</p>
+</footer>
+
+<script>
+    const class0 = Number({{ class_0 | tojson }});
+    const class1 = Number({{ class_1 | tojson }});
+
+    const chartCanvas = document.getElementById("outbreakChart");
+
+    new Chart(chartCanvas, {
+        type: "doughnut",
+
+        data: {
+            labels: ["Class 0", "Class 1"],
+
+            datasets: [{
+                data: [class0, class1],
+                backgroundColor: ["#10b981", "#ef4444"],
+                borderWidth: 0,
+                hoverOffset: 8
+            }]
+        },
+
+        options: {
+            responsive: true,
+
+            plugins: {
+                legend: {
+                    position: "bottom"
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

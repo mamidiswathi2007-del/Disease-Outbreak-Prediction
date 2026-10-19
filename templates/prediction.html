@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Disease Outbreak Prediction</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 18px;
+            background: #0f172a;
+        }
+
+        nav a {
+            color: white;
+            background: #1e40af;
+            padding: 11px 18px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            background: #0891b2;
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #123b69, #168aad);
+            color: white;
+            padding: 35px 25px;
+            border-radius: 18px;
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            color: white;
+            font-size: 34px;
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            line-height: 1.7;
+        }
+
+        .page-container {
+            max-width: 1050px;
+            margin: 35px auto;
+            padding: 20px;
+        }
+
+        .prediction-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 25px;
+        }
+
+        .form-card {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 30px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 6px 25px rgba(15, 23, 42, 0.09);
+        }
+
+        .form-card h2 {
+            margin-top: 0;
+            color: #123b69;
+            font-size: 25px;
+        }
+
+        .form-description {
+            color: #64748b;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #334155;
+        }
+
+        .form-group input {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            background: #f8fafc;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+        }
+
+        .field-help {
+            display: block;
+            margin-top: 6px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .predict-button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 25px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #2563eb, #0891b2);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .predict-button:hover {
+            background: linear-gradient(135deg, #1d4ed8, #0e7490);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .result-box {
+            max-width: 700px;
+            width: 100%;
+            margin: 25px auto 0;
+            padding: 25px;
+            border-radius: 14px;
+            background: #dcfce7;
+            border-left: 6px solid #16a34a;
+            overflow-wrap: anywhere;
+        }
+
+        .result-box h2 {
+            color: #166534;
+            margin-top: 0;
+        }
+
+        .result-box p {
+            line-height: 1.7;
+        }
+
+        .outbreak-result {
+            background: #fee2e2;
+            border-left-color: #dc2626;
+        }
+
+        .outbreak-result h2 {
+            color: #991b1b;
+        }
+
+        .error-box {
+            max-width: 700px;
+            margin: 25px auto;
+            padding: 20px;
+            color: #991b1b;
+            background: #fee2e2;
+            border-left: 6px solid #dc2626;
+            border-radius: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .info-card {
+            max-width: 700px;
+            margin: 25px auto 0;
+            padding: 20px;
+            border-radius: 12px;
+            background: #e0f2fe;
+            color: #075985;
+            line-height: 1.7;
+        }
+
+        .bottom-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 28px;
+        }
+
+        .bottom-links a {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #123b69;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .bottom-links a:hover {
+            background: #0891b2;
+        }
+
+        footer {
+            padding: 22px;
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                gap: 7px;
+                padding: 12px;
+            }
+
+            nav a {
+                padding: 9px 11px;
+                font-size: 13px;
+            }
+
+            .page-container {
+                margin: 15px auto;
+                padding: 12px;
+            }
+
+            .hero {
+                padding: 25px 15px;
+            }
+
+            .hero h1 {
+                font-size: 26px;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <a href="/">Home</a>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/prediction">Prediction</a>
+        <a href="/analytics">Analytics</a>
+        <a href="/dataset">Dataset</a>
+    </nav>
+
+    <main class="page-container">
+
+        <!-- Page heading -->
+        <section class="hero">
+            <h1>🩺 Disease Outbreak Prediction</h1>
+            <p>
+                Enter environmental conditions and reported cases
+                to obtain a machine-learning demonstration prediction.
+            </p>
+        </section>
+
+        <!-- Prediction form -->
+        <section class="prediction-layout">
+
+            <div class="form-card">
+
+                <h2>🔬 Enter Prediction Details</h2>
+
+                <p class="form-description">
+                    Enter all three values below and click the
+                    Predict Outbreak button.
+                </p>
+
+                <form action="/prediction" method="POST">
+
+                    <div class="form-group">
+                        <label for="temperature">
+                            🌡️ Temperature (°C)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="temperature"
+                            name="temperature"
+                            step="any"
+                            min="-50"
+                            max="70"
+                            placeholder="Example: 30.5"
+                            value="{{ request.form.get('temperature', '') }}"
+                            required
+                        >
+
+                        <span class="field-help">
+                            Allowed range: -50°C to 70°C.
+                        </span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rainfall">
+                            🌧️ Rainfall (mm)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="rainfall"
+                            name="rainfall"
+                            step="any"
+                            min="0"
+                            placeholder="Example: 120"
+                            value="{{ request.form.get('rainfall', '') }}"
+                            required
+                        >
+
+                        <span class="field-help">
+                            Enter a non-negative rainfall value.
+                        </span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cases">
+                            🏥 Reported Cases
+                        </label>
+
+                        <input
+                            type="number"
+                            id="cases"
+                            name="cases"
+                            step="1"
+                            min="0"
+                            placeholder="Example: 45"
+                            value="{{ request.form.get('cases', '') }}"
+                            required
+                        >
+
+                        <span class="field-help">
+                            Enter a whole number of reported cases.
+                        </span>
+                    </div>
+
+                    <button type="submit" class="predict-button">
+                        🔍 Predict Outbreak
+                    </button>
+
+                </form>
+            </div>
+
+        </section>
+
+        <!-- Error message -->
+        {% if error %}
+        <section class="error-box">
+            <h3>⚠️ Prediction Error</h3>
+            <p>{{ error }}</p>
+            <p>
+                Check your input values and make sure the trained model
+                exists in the models folder.
+            </p>
+        </section>
+        {% endif %}
+
+        <!-- Prediction result -->
+        {% if result %}
+
+            {% if result['class'] == 1 %}
+
+            <section class="result-box outbreak-result">
+                <h2>⚠️ Outbreak Class: 1</h2>
+
+                <h3>Model Classification: Outbreak</h3>
+
+                <p>
+                    The machine-learning model classified these input
+                    values as an outbreak.
+                </p>
+
+                <p>
+                    This is a model prediction, not confirmation of
+                    an actual disease outbreak.
+                </p>
+            </section>
+
+            {% else %}
+
+            <section class="result-box">
+                <h2>✅ Outbreak Class: 0</h2>
+
+                <h3>Model Classification: No Outbreak</h3>
+
+                <p>
+                    The machine-learning model classified these input
+                    values as no outbreak.
+                </p>
+
+                <p>
+                    This result does not guarantee that there is
+                    no actual disease outbreak.
+                </p>
+            </section>
+
+            {% endif %}
+
+            <section class="result-box">
+                <h3>📋 Submitted Input Values</h3>
+
+                <p>
+                    <strong>Temperature:</strong>
+                    {{ result['temperature'] }} °C
+                </p>
+
+                <p>
+                    <strong>Rainfall:</strong>
+                    {{ result['rainfall'] }} mm
+                </p>
+
+                <p>
+                    <strong>Reported Cases:</strong>
+                    {{ result['cases'] }}
+                </p>
+            </section>
+
+        {% endif %}
+
+        <!-- Information -->
+        <section class="info-card">
+            <h3>ℹ️ About This Prediction</h3>
+
+            <p>
+                This project demonstrates how a trained machine-learning
+                model classifies temperature, rainfall and reported-case
+                inputs.
+            </p>
+
+            <p>
+                The project uses a small synthetic dataset. Its predictions
+                have not been validated for real-world public-health use.
+            </p>
+        </section>
+
+        <!-- Navigation buttons -->
+        <div class="bottom-links">
+            <a href="/dashboard">📊 View Dashboard</a>
+            <a href="/analytics">📈 View Analytics</a>
+            <a href="/dataset">📁 Explore Dataset</a>
+        </div>
+
+    </main>
+
+    <footer>
+        Disease Outbreak Prediction Using Machine Learning
+    </footer>
+
+</body>
+</html>
